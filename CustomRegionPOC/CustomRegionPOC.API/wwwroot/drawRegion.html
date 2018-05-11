@@ -97,10 +97,12 @@
                 name: name,
                 points: coordinates
               }
-              //console.log(obj);
+              console.log(obj);
          
          
-            //postAjax('http://172.16.0.208:59983/api/customregion/', obj, function(data){ console.log(JSON.parse(data)); });
+            postAjax('/api/customregion/', obj, function(data){ 
+                //console.log(JSON.parse(data));
+                 });
          
             }
             coordinates = []

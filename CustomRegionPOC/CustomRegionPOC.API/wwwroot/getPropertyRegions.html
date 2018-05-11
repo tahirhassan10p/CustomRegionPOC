@@ -38,11 +38,43 @@
           center: {lat: -34.397, lng: 150.644},
           zoom: 8
         });
-
         }
 
+        var markers = [];
+
         google.maps.event.addListener(map, 'click', function(event) {
-         placeMarker(event.latLng);
+         //placeMarker(event.latLng);
+
+        var url = '/api/customregion/';
+        url += event.latLng.lat().toString();
+        url += '/';
+        url += event.latLng.lng().toString(); 
+
+
+         getAjax(url, function(res) {
+             console.log(res);
+
+            res = JSON.parse(res);
+            for (var i = 0 ; i < res.length; i++) {
+                var points = res[i].points;
+
+                var cordinates = [];
+                for (var j = 0; j < points.length; j++) {
+                    cordinates.push(new google.maps.LatLng(points[j].lat, points[j].lng));
+                }
+                // Construct the polygon.
+                var poly = new google.maps.Polygon({
+                  paths: cordinates,
+                  strokeColor: '#FF0000',
+                  strokeOpacity: 0.8,
+                  strokeWeight: 2,
+                  fillColor: '#FF0000',
+                  fillOpacity: 0.35
+                });
+                poly.setMap(map);
+                coordinates.push(poly);
+            }
+         });
         });
 
         function placeMarker(location) {
@@ -174,46 +206,46 @@
 
       };
 
-        // Construct the polygon.
-        var bermudaTriangle = new google.maps.Polygon({
-          paths: points,
-          strokeColor: '#FF0000',
-          strokeOpacity: 0.8,
-          strokeWeight: 2,
-          fillColor: '#FF0000',
-          fillOpacity: 0.35
-        });
+        // // Construct the polygon.
+        // var bermudaTriangle = new google.maps.Polygon({
+        //   paths: points,
+        //   strokeColor: '#FF0000',
+        //   strokeOpacity: 0.8,
+        //   strokeWeight: 2,
+        //   fillColor: '#FF0000',
+        //   fillOpacity: 0.35
+        // });
 
-        var bermudaTriangle2 = new google.maps.Polygon({
-          paths: points2,
-          strokeColor: '#FF0000',
-          strokeOpacity: 0.8,
-          strokeWeight: 2,
-          fillColor: '#FF0000',
-          fillOpacity: 0.35
-        });
-        bermudaTriangle2.setMap(map);
-        bermudaTriangle.setMap(map);
-
-
-         console.log(bermudaTriangle.contains(bermudaTriangle.getBoundingBox().getCenter()));
-
-         console.log(bermudaTriangle.getBoundingBox().getCenter().lat(),bermudaTriangle.getBoundingBox().getCenter().lng())
-
-         console.log(bermudaTriangle2.getBoundingBox().getCenter().lat(),bermudaTriangle2.getBoundingBox().getCenter().lng())
-
-        var marker = new google.maps.Marker({
-          position: bermudaTriangle2.getBoundingBox().getCenter(),
-          map: map,
-          title: 'Hello World!'
-        });
+        // var bermudaTriangle2 = new google.maps.Polygon({
+        //   paths: points2,
+        //   strokeColor: '#FF0000',
+        //   strokeOpacity: 0.8,
+        //   strokeWeight: 2,
+        //   fillColor: '#FF0000',
+        //   fillOpacity: 0.35
+        // });
+        // bermudaTriangle2.setMap(map);
+        // bermudaTriangle.setMap(map);
 
 
-        var marker2 = new google.maps.Marker({
-          position: bermudaTriangle.getBoundingBox().getCenter(),
-          map: map,
-          title: 'Hello World!'
-        });
+        //  console.log(bermudaTriangle.contains(bermudaTriangle.getBoundingBox().getCenter()));
+
+        //  console.log(bermudaTriangle.getBoundingBox().getCenter().lat(),bermudaTriangle.getBoundingBox().getCenter().lng())
+
+        //  console.log(bermudaTriangle2.getBoundingBox().getCenter().lat(),bermudaTriangle2.getBoundingBox().getCenter().lng())
+
+        // var marker = new google.maps.Marker({
+        //   position: bermudaTriangle2.getBoundingBox().getCenter(),
+        //   map: map,
+        //   title: 'Hello World!'
+        // });
+
+
+        // var marker2 = new google.maps.Marker({
+        //   position: bermudaTriangle.getBoundingBox().getCenter(),
+        //   map: map,
+        //   title: 'Hello World!'
+        // });
       }
 
      
