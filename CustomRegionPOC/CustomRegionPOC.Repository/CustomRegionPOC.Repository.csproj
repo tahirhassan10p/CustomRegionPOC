@@ -5,6 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.3.8" />
+    <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="3.3.5" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\CustomRegionPOC.Common\CustomRegionPOC.Common.csproj" />
   </ItemGroup>
 
