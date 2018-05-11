@@ -20,26 +20,16 @@ namespace CustomRegionPOC.API.Controllers
             this.service = service;
         }
 
-        [HttpGet("{id}", Name = "Get")]
-        public async Task<string> Get(int id)
+        [HttpGet("{lat}/{lng}", Name = "Get")]
+        public async Task<List<Region>> Get(decimal lat, decimal lng)
         {
-            return "value";
+            return await this.service.Get(lat, lng);
         }
 
         [HttpPost]
         public Task Post([FromBody]Region region)
         {
             return this.service.Create(region);
-        }
-
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
         }
     }
 }
