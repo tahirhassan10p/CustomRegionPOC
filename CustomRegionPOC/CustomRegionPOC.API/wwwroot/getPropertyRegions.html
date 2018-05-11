@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Drawing tools</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 100%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+      // This example requires the Drawing library. Include the libraries=drawing
+      // parameter when you first load the API. For example:
+      // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=drawing">
+
+       var coordinates = [];
+
+      function initMap() {
+        var map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: -34.397, lng: 150.644},
+          zoom: 8
+        });
+
+        function newMap() {
+          return new google.maps.Map(document.getElementById('map'), {
+          center: {lat: -34.397, lng: 150.644},
+          zoom: 8
+        });
+        }
+
+        var markers = [];
+
+        google.maps.event.addListener(map, 'click', function(event) {
+         //placeMarker(event.latLng);
+
+        var url = '/api/customregion/';
+        url += event.latLng.lat().toString();
+        url += '/';
+        url += event.latLng.lng().toString(); 
+
+
+         getAjax(url, function(res) {
+             console.log(res);
+
+            res = JSON.parse(res);
+            for (var i = 0 ; i < res.length; i++) {
+                var points = res[i].points;
+
+                var cordinates = [];
+                for (var j = 0; j < points.length; j++) {
+                    cordinates.push(new google.maps.LatLng(points[j].lat, points[j].lng));
+                }
+                // Construct the polygon.
+                var poly = new google.maps.Polygon({
+                  paths: cordinates,
+                  strokeColor: '#FF0000',
+                  strokeOpacity: 0.8,
+                  strokeWeight: 2,
+                  fillColor: '#FF0000',
+                  fillOpacity: 0.35
+                });
+                poly.setMap(map);
+                coordinates.push(poly);
+            }
+         });
+        });
+
+        function placeMarker(location) {
+          console.log(location)
+            var marker = new google.maps.Marker({
+                position: location, 
+                map: map
+            });
+        }
+
+
+            function postAjax(url, data, success) {
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', url);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState>3 && xhr.status==200) { success(xhr.responseText); }
+            };
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
+            //xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            xhr.send(JSON.stringify(data));
+            return xhr;
+            }
+
+              function getAjax(url, success) {
+                var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+                xhr.open('GET', url);
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState>3 && xhr.status==200) success(xhr.responseText);
+                };
+                xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+                xhr.send();
+                return xhr;
+              }
+
+                var triangleCoords = [
+          [-33.230939034690614, 150.61928076171876],
+          [-33.849038255867995, 149.52614111328126],
+          [-34.19051071347006,150.59181494140626],
+          [-33.73490924034172, 150.77858251953126],
+          [-33.497034238480225, 151.31691259765626]
+        ];
+
+
+       var secondTriangle = [
+        [-34.847841896696146,150.28710460860736],
+        [-34.68087371598812, 149.61693859298236],
+        [-34.54524641802601,150.06737804610736],
+        ];
+
+
+        var points = [];
+        var points2 = [];
+        for(var i=0;i<triangleCoords.length;i++) {
+         points.push(new google.maps.LatLng(triangleCoords[i][0],triangleCoords[i][1]))
+        }
+
+        for(var i=0;i<secondTriangle.length;i++) {
+         points2.push(new google.maps.LatLng(secondTriangle[i][0],secondTriangle[i][1]))
+        }
+
+        google.maps.Polygon.prototype.getBoundingBox = function() {
+        var bounds = new google.maps.LatLngBounds();
+
+
+        this.getPath().forEach(function(element,index) {
+          bounds.extend(element)
+        });
+
+
+        return(bounds);
+        };
+
+        google.maps.Polygon.prototype.contains = function (point) {
+    var crossings = 0,
+        path = this.getPath();
+
+    // for each edge
+    for (var i = 0; i < path.getLength(); i++) {
+        var a = path.getAt(i),
+            j = i + 1;
+        if (j >= path.getLength()) {
+            j = 0;
+        }
+        var b = path.getAt(j);
+        if (rayCrossesSegment(point, a, b)) {
+            crossings++;
+        }
+    }
+
+    // odd number of crossings?
+    return (crossings % 2 == 1);
+
+    function rayCrossesSegment(point, a, b) {
+        var px = point.lng(),
+            py = point.lat(),
+            ax = a.lng(),
+            ay = a.lat(),
+            bx = b.lng(),
+            by = b.lat();
+        if (ay > by) {
+            ax = b.lng();
+            ay = b.lat();
+            bx = a.lng();
+            by = a.lat();
+        }
+        // alter longitude to cater for 180 degree crossings
+        if (px < 0) {
+            px += 360;
+        }
+        if (ax < 0) {
+            ax += 360;
+        }
+        if (bx < 0) {
+            bx += 360;
+        }
+
+        if (py == ay || py == by) py += 0.00000001;
+        if ((py > by || py < ay) || (px > Math.max(ax, bx))) return false;
+        if (px < Math.min(ax, bx)) return true;
+
+        var red = (ax != bx) ? ((by - ay) / (bx - ax)) : Infinity;
+        var blue = (ax != px) ? ((py - ay) / (px - ax)) : Infinity;
+        return (blue >= red);
+
+    }
+
+      };
+
+        // // Construct the polygon.
+        // var bermudaTriangle = new google.maps.Polygon({
+        //   paths: points,
+        //   strokeColor: '#FF0000',
+        //   strokeOpacity: 0.8,
+        //   strokeWeight: 2,
+        //   fillColor: '#FF0000',
+        //   fillOpacity: 0.35
+        // });
+
+        // var bermudaTriangle2 = new google.maps.Polygon({
+        //   paths: points2,
+        //   strokeColor: '#FF0000',
+        //   strokeOpacity: 0.8,
+        //   strokeWeight: 2,
+        //   fillColor: '#FF0000',
+        //   fillOpacity: 0.35
+        // });
+        // bermudaTriangle2.setMap(map);
+        // bermudaTriangle.setMap(map);
+
+
+        //  console.log(bermudaTriangle.contains(bermudaTriangle.getBoundingBox().getCenter()));
+
+        //  console.log(bermudaTriangle.getBoundingBox().getCenter().lat(),bermudaTriangle.getBoundingBox().getCenter().lng())
+
+        //  console.log(bermudaTriangle2.getBoundingBox().getCenter().lat(),bermudaTriangle2.getBoundingBox().getCenter().lng())
+
+        // var marker = new google.maps.Marker({
+        //   position: bermudaTriangle2.getBoundingBox().getCenter(),
+        //   map: map,
+        //   title: 'Hello World!'
+        // });
+
+
+        // var marker2 = new google.maps.Marker({
+        //   position: bermudaTriangle.getBoundingBox().getCenter(),
+        //   map: map,
+        //   title: 'Hello World!'
+        // });
+      }
+
+     
+      
+
+
+
+
+    
+    
+
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCPwkFRPrwauZKWfskQ9FcyieUWd_-VALM&libraries=drawing&callback=initMap"
+         async defer></script>
+         <br><br>
+         <input type="button" value="find regions" onclick="window.location.href='drawRegion.html'" />
+         <br><br>
+  </body>
+</html>
