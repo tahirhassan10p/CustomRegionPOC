@@ -9,5 +9,7 @@ namespace CustomRegionPOC.Common.Service
     public interface IRegionService
     {
         Task Create(Region region);
+
+        Task<List<Region>> Get(decimal lat, decimal lng);
     }
 }

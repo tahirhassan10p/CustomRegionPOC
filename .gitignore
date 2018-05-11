@@ -4,3 +4,4 @@ obj/
 .vs
 /.vs
 *.user
+CustomRegionPOC/CustomRegionPOC.API/appsettings.json

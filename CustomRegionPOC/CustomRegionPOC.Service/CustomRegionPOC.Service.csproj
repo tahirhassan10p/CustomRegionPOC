@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="IronPython" Version="2.7.8.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\CustomRegionPOC.Common\CustomRegionPOC.Common.csproj" />
     <ProjectReference Include="..\CustomRegionPOC.Repository\CustomRegionPOC.Repository.csproj" />
   </ItemGroup>
