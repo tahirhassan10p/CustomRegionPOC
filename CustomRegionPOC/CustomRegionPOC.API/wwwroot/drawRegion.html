@@ -22,17 +22,19 @@
          
          function initMap() {
           var map = new google.maps.Map(document.getElementById('map'), {
-            center: {lat: -34.397, lng: 150.644},
-            zoom: 8
+            center: {lat: 39.48074006114467, lng: -101.43078939104066},
+            zoom: 10
           });
          
           function newMap() {
             return new google.maps.Map(document.getElementById('map'), {
-            center: {lat: -34.397, lng: 150.644},
-            zoom: 8
+            center: {lat: 39.48074006114467, lng: -101.43078939104066},
+            zoom: 10
           });
          
           }
+          
+          
          
           var drawingManager = new google.maps.drawing.DrawingManager({
             drawingMode: google.maps.drawing.OverlayType.POLYGON,
@@ -108,10 +110,16 @@
             coordinates = []
             map = newMap();
             drawingManager.setMap(map);
+
+              var opt = { minZoom: 8, maxZoom: 10 };
+              map.setOptions(opt);
           });
          
           map = newMap();
           drawingManager.setMap(map);
+          
+          var opt = { minZoom: 8, maxZoom: 10 };
+          map.setOptions(opt);
          }
          
       </script>
